@@ -1,0 +1,55 @@
+# NOTE : SCROLL TO BOTTOM TO VIEW START OF PROJECT 4
+
+import pandas as pd
+import csv
+import numpy as np
+import matplotlib.pyplot as plt
+
+#took a csv file with data about chemical characteristics of white wine from online
+#source for website from which the data was retrieved will be included in the word document.
+
+from pandas import DataFrame, Series
+df = pd.read_table('winequality-white.csv', delimiter=';')
+df = pd.read_csv('winequality-white.csv', header = 200, sep = ';')
+
+
+# Create acceptable ranges for each attribute 
+# For fixed acidity - 0 - 500 mg/L ; citric acid
+# residual suger range : 10 - 20 g/L 
+# sulfure dioxide rnage : 100 - 200 g/L
+
+
+dy = DataFrame(df)
+d2 = dy.iloc[pd.np.r_[0:200]]
+d2 = d2.drop(columns = ['5','0.26','0.24','0.052','54','0.9961','3.13','0.47','8.9'])
+d2 = d2.rename(columns = {'6.8':'FA', '7.8':'rsr', '214':'SD'})
+print('Wine Quality Based on Chemical Characteristics DataFrame')
+empty_list = []   
+i = 0
+j = 0
+k = 0
+for index in range(d2.shape[1]):
+    print(index)
+    c_series = d2.iloc[54,0]
+    print(c_series)
+    while i < 200:
+        if d2.iloc[i, 0] > 5:
+            empty_list.append(0)
+        else:
+            empty_list.append(1)
+        i += 1
+    while j < 200:
+        if d2.iloc[j, 1] > 20 or d2.iloc[j, 1] < 10:
+            empty_list[j] = 0
+        else:
+            empty_list[j] = 1
+        j += 1
+    while k < 200:
+        if d2.iloc[k, 2] < 100 or d2.iloc[k, 2] > 200:
+            empty_list[k] = 0
+        else:
+            empty_list[k] = 1
+        k += 1
+d2['classes'] = empty_list         
+print(empty_list) 
+d2
