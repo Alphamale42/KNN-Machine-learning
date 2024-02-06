@@ -53,3 +53,211 @@ for index in range(d2.shape[1]):
 d2['classes'] = empty_list         
 print(empty_list) 
 d2
+
+d2_sorted = d2.sort_values('classes', ignore_index = True)
+d2_sorted
+
+d2_sorted.classes.value_counts()
+
+d2_sorted.classes.value_counts()
+# 152 1 values
+# 48 0 values
+f0, f1 = d2_sorted.classes.value_counts()
+#f0, f1;
+
+import matplotlib.pyplot as plt
+
+
+fig, axs = plt.subplots(figsize = (10,3.5))
+axs1 = plt.subplot2grid(shape=(1,3), loc = (0,0))
+axs2 = plt.subplot2grid(shape=(1,3), loc = (0,1))
+axs3 = plt.subplot2grid(shape=(1,3), loc = (0,2))
+plt.tight_layout()
+
+# Below displays a histogram with both classes that are descriptive of good and bad quality white wine
+'''
+axs1.hist(d2.iloc[0:f1, 0], edgecolor = 'b', fc = 'none', label = 'c0')
+axs1.hist(d2.iloc[f0:f1+f0, 0],edgecolor = 'r',fc = 'none', label = 'c1')
+
+'''
+#Scatter plots for axs1
+axs1.scatter(d2_sorted.iloc[0:f1, 0], d2_sorted.iloc[0:f1, 0], label = 'c0')
+axs1.scatter(d2_sorted.iloc[f1:f0+f1, 0], d2_sorted.iloc[f1:f1+f0, 0], label = 'c1')
+
+axs1.set_xlabel ('Fixed Acidity (Mg/L)\n(a)')
+axs1.set_ylabel ('Fixed Acidity (Mg/L)')
+axs1.legend()
+
+#Scatter plots for axs2
+axs2.scatter(d2_sorted.iloc[0:f1, 1], d2_sorted.iloc[0:f1, 0], label = 'c0')
+axs2.scatter(d2_sorted.iloc[f1:f0+f1, 1], d2_sorted.iloc[f1:f1+f0, 0], label = 'c1')
+'''
+axs2.hist(d2.iloc[0:f1, 1], edgecolor = 'b', fc = 'none', label = 'c0')
+axs2.hist(d2.iloc[f0:f1+f0, 1],edgecolor = 'r',fc = 'none', label = 'c1')
+'''
+axs2.set_xlabel ('Residual Sugar Range (g/L)\n(b)')
+axs2.set_ylabel ('Fixed Acidity (g/L)')
+axs2.legend()
+
+#Scatter plots for axs3
+axs3.scatter(d2_sorted.iloc[0:f1, 2], d2_sorted.iloc[0:f1, 0], label = 'c0')
+axs3.scatter(d2_sorted.iloc[f1:f0+f1, 2], d2_sorted.iloc[f1:f1+f0, 0], label = 'c1')
+'''
+axs3.hist(d2.iloc[0:f1, 2], edgecolor = 'b', fc = 'none', label = 'c0')
+axs3.hist(d2.iloc[f0:f1+f0, 2],edgecolor = 'r',fc = 'none', label = 'c1')
+'''
+axs3.set_xlabel ('Sulfur Dioxide (g/L)\n(c)')
+axs3.set_ylabel ('Fixed Acidity (Mg/L)')
+axs3.legend()
+
+import seaborn as sns
+sns.pairplot(d2, hue='classes')
+
+import numpy as np
+import pandas as pd
+from pandas import Series, DataFrame
+
+d2X = d2.drop (columns = ['classes'])
+s2 = d2.classes
+from sklearn.model_selection import train_test_split
+d2X_train, d2X_test, s2_train, s2_test = train_test_split(d2X, s2)
+
+d2X_train, d2X_test, s2_train, s2_test;
+
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+le = le.fit(s2_train)
+y_train = le.transform(s2_train)
+s2_train, y_train
+
+nl = preprocessing.MinMaxScaler()
+nl = nl.fit(d2X_train.to_numpy())
+X_train = nl.transform(d2X_train.to_numpy())
+
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=1)
+knn = knn.fit(X_train, y_train)
+knn
+
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=1)
+knn = knn.fit(X_train, y_train)
+knn
+
+X_test = nl.transform(d2X_test.to_numpy())
+X_test
+
+y_test = le.transform(s2_test.to_numpy())
+y_test
+
+
+knn_train_scores = []
+knn_test_scores = []
+
+for i in range(1, 11):
+    knn = KNeighborsClassifier(n_neighbors = i)
+    knn = knn.fit(X_train, y_train)
+    
+    knn_train_scores.append(knn.score(X_train, y_train))
+    knn_test_scores.append(knn.score(X_test, y_test))
+    
+score_array = np.column_stack((range(1, 11), knn_train_scores, knn_test_scores))
+score_array
+
+import matplotlib.pyplot as plt
+
+fig, axs = plt.subplots(figsize = (10, 5))
+plt.subplot2grid(shape=(1,1), loc = (0,0))
+plt.tight_layout()
+
+plt.plot(range(1, 11), knn_train_scores, label = "MinMaxScaler training scores") 
+plt.plot(range(1, 11), knn_test_scores, label = "MinMaxScaler test scores")
+plt.xlabel('# of Neighbors')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+
+stand = preprocessing.StandardScaler()
+stand = stand.fit(d2X_train.to_numpy())
+
+X_train = stand.transform(d2X_train.to_numpy())
+y_train = le.transform(s2_train.to_numpy())
+
+X_test = stand.transform(d2X_test.to_numpy())
+y_test = le.transform(s2_test.to_numpy())
+
+knn_train_scores_standard = []
+knn_test_scores_standard = []
+for i in range(1, 11):
+    knn = KNeighborsClassifier(n_neighbors = i)
+    knn = knn.fit(X_train, y_train)
+    
+    knn_train_scores_standard.append(knn.score(X_train, y_train))
+    knn_test_scores_standard.append(knn.score(X_test, y_test))
+    
+score_array = np.column_stack((range(1, 11), knn_train_scores_standard, knn_test_scores_standard))
+score_array
+
+fig, axs = plt.subplots(figsize = (10, 5))
+plt.subplot2grid(shape=(1,1), loc = (0,0))
+plt.tight_layout()
+
+plt.plot(range(1, 11), knn_train_scores_standard, label = "StandardScaler training scores") 
+plt.plot(range(1, 11), knn_test_scores_standard, label = "StandardScaler test scores")
+plt.xlabel('# of Neighbors')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn import svm, datasets
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import ConfusionMatrixDisplay
+
+# import some data to play with
+X = d2X
+y = s2
+class_names = le.classes_
+
+# Split the data into a training set and a test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+
+# Run classifier, using a model that is too regularized (C too low) to see
+# the impact on the results
+classifier = svm.SVC(kernel="linear", C=0.01).fit(X_train, y_train)
+
+np.set_printoptions(precision=2)
+
+# Plot non-normalized confusion matrix
+titles_options = [
+    ("Confusion matrix, without normalization", None),
+    ("Normalized confusion matrix", "true"),
+]
+for title, normalize in titles_options:
+    disp = ConfusionMatrixDisplay.from_estimator(
+        classifier,
+        X_train,
+        y_train,
+        display_labels=class_names,
+        cmap=plt.cm.Blues,
+        normalize=normalize,
+    )
+    disp.ax_.set_title(title)
+
+    print(title)
+    print(disp.confusion_matrix)
+
+plt.show()
+
+#Taken from row 300 of winequality-white.csv
+new_example_rawdata = np.array([   [7.5, 11.3, 146]   ])
+X_new = stand.transform(new_example_rawdata)
+X_new
+
+knn.predict(X_new)
+
+le.inverse_transform(knn.predict(X_new))
+
+
